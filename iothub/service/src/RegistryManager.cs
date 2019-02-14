@@ -23,7 +23,7 @@ namespace Microsoft.Azure.Devices
         /// <returns> An RegistryManager instance. </returns>
         public static RegistryManager CreateFromConnectionString(string connectionString)
         {
-            return CreateFromConnectionString(connectionString, new HttpTransportSettings());
+            return CreateFromConnectionString(connectionString, new HttpTransportSettings(), null);
         }
 
         /// <summary>
@@ -34,12 +34,25 @@ namespace Microsoft.Azure.Devices
         /// <returns> An RegistryManager instance. </returns>
         public static RegistryManager CreateFromConnectionString(string connectionString, HttpTransportSettings transportSettings)
         {
+            return CreateFromConnectionString(connectionString, transportSettings, null);
+        }
+
+        /// <summary>
+        /// Creates a RegistryManager from the Iot Hub connection string and transport settings
+        /// </summary>
+        /// <param name="connectionString"> The Iot Hub connection string.</param>
+        /// <param name="transportSettings"> The HTTP transport settings.</param>
+        /// <param name="defaultTimeout">Operation default timeout</param>
+        /// <returns> An RegistryManager instance. </returns>
+        public static RegistryManager CreateFromConnectionString(string connectionString, HttpTransportSettings transportSettings, 
+            TimeSpan? defaultTimeout)
+        {
 #if NET451
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 #endif
-            
+
             IotHubConnectionString iotHubConnectionString = IotHubConnectionString.Parse(connectionString);
-            return new HttpRegistryManager(iotHubConnectionString, transportSettings);
+            return new HttpRegistryManager(iotHubConnectionString, transportSettings, defaultTimeout);
         }
 
         /// <inheritdoc />

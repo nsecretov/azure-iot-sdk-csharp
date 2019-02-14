@@ -49,20 +49,22 @@ namespace Microsoft.Azure.Devices
             RegexOptions.Compiled | RegexOptions.IgnoreCase,
             regexTimeoutMilliseconds);
 
-        private static readonly TimeSpan DefaultOperationTimeout = TimeSpan.FromSeconds(100);
+        private static readonly TimeSpan DefaultOperationTimeout = TimeSpan.FromSeconds(15);
         private static readonly TimeSpan DefaultGetDevicesOperationTimeout = TimeSpan.FromSeconds(120);
 
         IHttpClientHelper httpClientHelper;
         readonly string iotHubName;
 
-        internal HttpRegistryManager(IotHubConnectionString connectionString, HttpTransportSettings transportSettings)
+        internal HttpRegistryManager(IotHubConnectionString connectionString, HttpTransportSettings transportSettings, TimeSpan? defaultTimeout)
         {
             this.iotHubName = connectionString.IotHubName;
+            var timeout = defaultTimeout ?? DefaultOperationTimeout;
+
             this.httpClientHelper = new HttpClientHelper(
                 connectionString.HttpsEndpoint,
                 connectionString,
                 ExceptionHandlingHelper.GetDefaultErrorMapping(),
-                DefaultOperationTimeout,
+                timeout,
                 client => { },
                 transportSettings.Proxy);
         }
